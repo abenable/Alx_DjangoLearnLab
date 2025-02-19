@@ -1,60 +1,8 @@
 {% extends 'relationship_app/base.html' %} {% block content %}
-<div class="book-list-container">
-  {% if messages %}
-  <div class="messages">
-    {% for message in messages %}
-    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
-      {{ message }}
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  <div class="book-list-header">
-    <h1>Books Available</h1>
-    {% if perms.relationship_app.can_add_book %}
-    <a href="{% url 'relationship_app:book_add' %}" class="add-button"
-      >Add New Book</a
-    >
-    {% endif %}
-  </div>
-
-  <div class="book-list">
-    {% if books %}
-    <ul>
-      {% for book in books %}
-      <li class="book-item">
-        <div class="book-info">
-          <h3>{{ book.title }}</h3>
-          <p>by {{ book.author.name }}</p>
-        </div>
-        <div class="book-actions">
-          {% if perms.relationship_app.can_view_book_details %}
-          <a
-            href="{% url 'relationship_app:book_detail' book.pk %}"
-            class="view-button"
-            >View Details</a
-          >
-          {% endif %} {% if perms.relationship_app.can_edit_book %}
-          <a
-            href="{% url 'relationship_app:book_edit' book.pk %}"
-            class="edit-button"
-            >Edit</a
-          >
-          {% endif %} {% if perms.relationship_app.can_delete_book %}
-          <a
-            href="{% url 'relationship_app:book_delete' book.pk %}"
-            class="delete-button"
-            >Delete</a
-          >
-          {% endif %}
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p>No books available.</p>
-    {% endif %}
-  </div>
-</div>
+<h1>Books List</h1>
+<ul>
+  {% for book in books %}
+  <li>{{ book.title }} - {{ book.author.name }}</li>
+  {% endfor %}
+</ul>
 {% endblock %}
