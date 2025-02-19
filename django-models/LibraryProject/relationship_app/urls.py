@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import list_books
 from .views.book_views import (
     BookCreateView, 
     BookUpdateView, 
@@ -12,7 +13,7 @@ app_name = 'relationship_app'
 
 urlpatterns = [
     # Book and Library paths
-    path('books/', views.book_list, name='book_list'),
+    path('books/', views.BookListView.as_view(), name='book_list'),
     path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
     
     # Authentication paths

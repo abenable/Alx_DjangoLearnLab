@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from .models import Library,Book
+from .models import Library, Book
 
 # Role check functions
 def is_admin(user):
@@ -74,14 +75,18 @@ def member_view(request):
     return render(request, 'relationship_app/role_views/member_view.html', context)
 
 # Book and Library views
-@login_required
-def book_list(request):
-    books = Book.objects.all().select_related('author')
-    context = {
-        'books': books,
-        'user_role': request.user.profile.role
-    }
-    return render(request, 'relationship_app/list_books.html', context)
+class BookListView(LoginRequiredMixin, ListView):
+    model = Book
+    template_name = 'relationship_app/list_books.html'
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        return Book.objects.select_related('author')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_role'] = self.request.user.profile.role
+        return context
 
 class LibraryDetailView(LoginRequiredMixin, DetailView):
     model = Library
