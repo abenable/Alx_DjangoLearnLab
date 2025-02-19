@@ -44,7 +44,7 @@ def register(request):
 
 # Role-based views
 @user_passes_test(is_admin)
-def admin_view(request):
+def Admin(request):
     context = {
         'user_count': User.objects.count(),
         'book_count': Book.objects.count(),
