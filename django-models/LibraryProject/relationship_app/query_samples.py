@@ -5,8 +5,12 @@ def query_books_by_author(author):
     return Book.objects.filter(author=author)
 
 def list_library_books():
-    # List all books in a library using filter
-    return Book.objects.all()
+    # List all books in a library using the books relationship
+    try:
+        library = Library.objects.first()  # Get the first library
+        return library.books.all()  # Use the books relationship to get all books
+    except Library.DoesNotExist:
+        return None
 
 def get_library_librarian(library_name):
     # Retrieve the librarian for a library
