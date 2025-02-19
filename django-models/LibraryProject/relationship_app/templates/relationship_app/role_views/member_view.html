@@ -1,0 +1,27 @@
+{% extends 'relationship_app/base.html' %} {% block content %}
+<div class="member-dashboard">
+  <h2>{{ title }}</h2>
+  <div class="book-list">
+    <h3>Available Books</h3>
+    <ul>
+      {% for book in books %}
+      <li>
+        <div class="book-item">
+          <h4>{{ book.title }}</h4>
+          <p>Author: {{ book.author.name }}</p>
+          <button>Borrow Book</button>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="member-actions">
+    <h3>Member Actions</h3>
+    <ul>
+      <li><a href="#">My Borrowed Books</a></li>
+      <li><a href="#">Reading History</a></li>
+      <li><a href="#">Update Profile</a></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

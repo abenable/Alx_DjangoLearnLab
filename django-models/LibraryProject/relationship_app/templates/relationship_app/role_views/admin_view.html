@@ -1,0 +1,21 @@
+{% extends 'relationship_app/base.html' %} {% block content %}
+<div class="admin-dashboard">
+  <h2>{{ title }}</h2>
+  <div class="admin-stats">
+    <h3>System Statistics</h3>
+    <ul>
+      <li>Total Users: {{ user_count }}</li>
+      <li>Total Books: {{ book_count }}</li>
+      <li>Total Libraries: {{ library_count }}</li>
+    </ul>
+  </div>
+  <div class="admin-actions">
+    <h3>Administrative Actions</h3>
+    <ul>
+      <li><a href="{% url 'admin:index' %}">Django Admin Interface</a></li>
+      <li><a href="{% url 'relationship_app:book_list' %}">Manage Books</a></li>
+      <li><a href="#">Manage Users</a></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
