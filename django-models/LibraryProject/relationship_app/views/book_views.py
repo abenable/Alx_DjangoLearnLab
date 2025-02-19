@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Book, Library
+from relationship_app.models import Book, Library
 from django import forms
 
 @login_required
@@ -51,7 +51,7 @@ class BookUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = BookForm
     template_name = 'relationship_app/book/book_form.html'
     success_url = reverse_lazy('relationship_app:book_list')
-    permission_required = 'relationship_app.can_edit_book'
+    permission_required = 'relationship_app.can_change_book'  # Updated from can_edit_book to match model permission
 
     def handle_no_permission(self):
         messages.error(self.request, "You don't have permission to edit books.")
