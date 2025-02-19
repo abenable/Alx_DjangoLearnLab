@@ -1,7 +1,7 @@
 /* Basic styles for authentication pages */
 body {
   font-family: Arial, sans-serif;
-  max-width: 600px;
+  max-width: 1200px;
   margin: 2rem auto;
   padding: 1rem;
 }
@@ -39,4 +39,127 @@ a:hover {
   color: red;
   list-style: none;
   padding: 0;
+}
+
+/* Book Management Styles */
+.book-list-container {
+  padding: 20px;
+}
+
+.book-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.book-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.book-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.add-button,
+.edit-button,
+.delete-button,
+.view-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.add-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.edit-button {
+  background-color: #2196f3;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.view-button {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.messages {
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.message {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.message.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+.message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+/* Book Form Styles */
+.book-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.book-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.book-form input,
+.book-form select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.book-detail {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.book-info {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #666;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #333;
 }
