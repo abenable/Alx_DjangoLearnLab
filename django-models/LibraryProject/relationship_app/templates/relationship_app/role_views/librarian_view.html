@@ -17,9 +17,9 @@
   <div class="librarian-actions">
     <h3>Management Actions</h3>
     <ul>
-      <li><a href="#">Add New Book</a></li>
-      <li><a href="#">Manage Loans</a></li>
-      <li><a href="#">View Members</a></li>
+      <li><a href="{% url 'relationship_app:book_add' %}">Add New Book</a></li>
+      <li><a href="{% url 'relationship_app:book_list' %}">Manage Books</a></li>
+      <li><a href="{% url 'relationship_app:library_detail' library.id %}">View Library Details</a></li>
     </ul>
   </div>
 </div>
