@@ -24,4 +24,7 @@ urlpatterns = [
     
     # Library URLs
     path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    
+    # Add the example form URL pattern
+    path('form-example/', views.form_example, name='form_example'),
 ]

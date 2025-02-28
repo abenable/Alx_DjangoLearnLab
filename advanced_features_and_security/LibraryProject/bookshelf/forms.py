@@ -84,3 +84,42 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ['title', 'author']
+
+class ExampleForm(forms.Form):
+    """
+    Example form with security validations for demonstration purposes.
+    SECURITY: Implements input validation and sanitization to prevent XSS attacks.
+    """
+    name = forms.CharField(
+        max_length=100, 
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        max_length=1000
+    )
+    
+    def clean_name(self):
+        """
+        SECURITY: Sanitizes user input by escaping HTML characters to prevent XSS attacks.
+        """
+        name = self.cleaned_data.get('name')
+        if name:
+            name = escape(name.strip())
+            if len(name) < 2:
+                raise ValidationError('Name must be at least 2 characters long.')
+        return name
+    
+    def clean_message(self):
+        """
+        SECURITY: Sanitizes user input in the message field to prevent XSS attacks.
+        """
+        message = self.cleaned_data.get('message')
+        if message:
+            message = escape(message.strip())
+        return message

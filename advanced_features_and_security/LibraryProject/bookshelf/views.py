@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.debug import sensitive_post_parameters
 from django import forms
 from .models import Book, Library, CustomUser, Author
+from .forms import ExampleForm
 
 # SECURITY: Role check functions ensure proper access control
 def is_admin(user):
@@ -323,3 +324,39 @@ class LibraryDetailView(LoginRequiredMixin, DetailView):  # SECURITY: Login requ
             # SECURITY: Generic error message to avoid information disclosure
             messages.error(self.request, 'Error retrieving library details.')
             return {}
+
+@require_http_methods(["GET", "POST"])  # SECURITY: Restricts HTTP methods to prevent unintended operations
+def form_example(request):
+    """
+    View function for the example form, demonstrating secure form handling.
+    SECURITY: Implements proper form validation, sanitization, and CSRF protection.
+    """
+    submitted = False
+    
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # SECURITY: Form validation ensures all input is sanitized
+            # In a real app, you would typically save the data here
+            # but for this example, we're just showing validation
+            
+            # Get sanitized data
+            name = form.cleaned_data.get('name')
+            email = form.cleaned_data.get('email')
+            message = form.cleaned_data.get('message')
+            
+            # Log the submission (in a real app, you might save to DB)
+            print(f"Form submission: {name}, {email}")
+            
+            messages.success(request, 'Form submitted successfully!')
+            submitted = True
+            # Return a new form instance for security (prevents form resubmission)
+            form = ExampleForm()
+    else:
+        form = ExampleForm()
+    
+    return render(request, 'bookshelf/form_example.html', {
+        'form': form,
+        'submitted': submitted,
+        'title': 'Secure Form Example'
+    })
