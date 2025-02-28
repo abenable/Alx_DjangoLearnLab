@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.auth_views import login_view, logout_view, register
+from .views.auth_views import login_view, logout_view, register, change_password
 from .views.admin_view import admin_view
 from .views.librarian_view import librarian_view
 from .views.member_view import member_view
@@ -19,6 +19,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('register/', register, name='register'),
+    path('change-password/', change_password, name='change_password'),
     
     # Role-based dashboard URLs
     path('admin/dashboard/', admin_view, name='admin_dashboard'),

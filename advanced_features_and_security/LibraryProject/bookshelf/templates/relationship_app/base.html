@@ -3,6 +3,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';"
+    />
     <title>{{ title }}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
@@ -10,7 +16,8 @@
     <nav class="main-nav">
       {% if user.is_authenticated %}
       <span class="user-info"
-        >Welcome, {{ user.username }} ({{ user.profile.role }})</span
+        >Welcome, {{ user.username|escape }} ({{ user.profile.role|escape
+        }})</span
       >
       <div class="nav-links">
         {% if user.profile.role == 'ADMIN' %}
