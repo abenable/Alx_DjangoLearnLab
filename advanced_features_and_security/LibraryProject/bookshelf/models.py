@@ -33,7 +33,6 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
-# Role choices tuple
 ROLE_CHOICES = [
     ('ADMIN', 'Admin'),
     ('LIBRARIAN', 'Librarian'),
