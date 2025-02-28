@@ -44,6 +44,10 @@ CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
 SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
 SECURE_SSL_REDIRECT = True  # Forces all connections to use HTTPS instead of HTTP
 
+# SECURITY: Proxy SSL Header - for when running behind a reverse proxy
+# This tells Django to trust X-Forwarded-Proto header from the proxy for determining if the request is secure
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # SECURITY: HTTP Strict Transport Security
 SECURE_HSTS_SECONDS = 31536000  # 1 year - instructs browsers to use HTTPS for this domain for the specified period
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS to all subdomains as well
