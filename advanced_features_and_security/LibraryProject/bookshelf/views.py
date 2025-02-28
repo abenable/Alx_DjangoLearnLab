@@ -74,11 +74,21 @@ def member_view(request):
     }
     return render(request, 'relationship_app/role_views/member_view.html', context)
 
+@login_required
+def book_list(request):
+    books = Book.objects.select_related('author').all()
+    context = {
+        'books': books,
+        'title': 'Book List',
+    }
+    return render(request, 'relationship_app/list_books.html', context)
+
 # Book and Library views
 class BookListView(LoginRequiredMixin, ListView):
     model = Book
     template_name = 'relationship_app/list_books.html'
     context_object_name = 'books'
+    raise_exception = True  # This will raise a PermissionDenied exception instead of redirecting to login
 
     def get_queryset(self):
         return Book.objects.all().select_related('author')
