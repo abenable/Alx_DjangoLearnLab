@@ -12,7 +12,7 @@ from .views.book_views import (
     LibraryDetailView
 )
 
-app_name = 'relationship_app'
+app_name = 'bookshelf'
 
 urlpatterns = [
     # Authentication URLs

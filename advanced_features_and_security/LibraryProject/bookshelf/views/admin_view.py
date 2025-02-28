@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
-from relationship_app.models import Book, Library
+from bookshelf.models import Book, Library
 
 def is_admin(user):
     return user.is_authenticated and user.profile.role == 'ADMIN'

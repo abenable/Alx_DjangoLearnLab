@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
-from relationship_app.models import Book
+from bookshelf.models import Book
 
 def is_member(user):
     return user.is_authenticated and user.profile.role == 'MEMBER'

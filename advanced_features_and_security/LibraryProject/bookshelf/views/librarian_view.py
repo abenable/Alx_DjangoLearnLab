@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
-from relationship_app.models import Library, Book
+from bookshelf.models import Library, Book
 
 def is_librarian(user):
     return user.is_authenticated and user.profile.role == 'LIBRARIAN'

@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from relationship_app.models import Book, Library
+from bookshelf.models import Book, Library
 from django import forms
 
 class BookForm(forms.ModelForm):

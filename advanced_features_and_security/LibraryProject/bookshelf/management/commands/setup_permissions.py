@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from relationship_app.models import Book
+from bookshelf.models import Book
 
 class Command(BaseCommand):
     help = 'Create default groups and permissions'

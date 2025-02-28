@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'relationship_app',
+    'bookshelf',
 ]
 
 MIDDLEWARE = [
@@ -133,9 +133,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Authentication settings
-LOGIN_REDIRECT_URL = 'relationship_app:member_dashboard'
-LOGOUT_REDIRECT_URL = 'relationship_app:login'
-LOGIN_URL = 'relationship_app:login'
+LOGIN_REDIRECT_URL = 'bookshelf:member_dashboard'
+LOGOUT_REDIRECT_URL = 'bookshelf:login'
+LOGIN_URL = 'bookshelf:login'
 
 # Custom User Model
-AUTH_USER_MODEL = 'relationship_app.CustomUser'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
