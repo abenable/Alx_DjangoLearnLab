@@ -14,14 +14,17 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django import forms
 from .models import Book, Library, CustomUser, Author
 
-# Role check functions
+# SECURITY: Role check functions ensure proper access control
 def is_admin(user):
+    """SECURITY: Verifies if a user has admin role"""
     return user.is_authenticated and user.profile.role == 'ADMIN'
 
 def is_librarian(user):
+    """SECURITY: Verifies if a user has librarian role"""
     return user.is_authenticated and user.profile.role == 'LIBRARIAN'
 
 def is_member(user):
+    """SECURITY: Verifies if a user has member role"""
     return user.is_authenticated and user.profile.role == 'MEMBER'
 
 # Forms
@@ -40,7 +43,7 @@ class ExtendedUserCreationForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords don't match")
         
-        # Password strength validation
+        # SECURITY: Password strength validation to enforce secure passwords
         if len(password1) < 8:
             raise ValidationError("Password must be at least 8 characters long")
         if not any(char.isdigit() for char in password1):
@@ -51,6 +54,7 @@ class ExtendedUserCreationForm(forms.ModelForm):
         return password2
 
     def clean_email(self):
+        # SECURITY: Prevent duplicate email registration
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exists():
             raise ValidationError("This email is already registered")
@@ -58,6 +62,7 @@ class ExtendedUserCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        # SECURITY: Secure password handling using Django's password hashing
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
@@ -67,6 +72,7 @@ class ExtendedUserCreationForm(forms.ModelForm):
 
 class BookForm(forms.ModelForm):
     def clean_title(self):
+        # SECURITY: Input validation and HTML escaping to prevent XSS
         title = self.cleaned_data.get('title')
         if title:
             title = escape(title.strip())
@@ -79,8 +85,8 @@ class BookForm(forms.ModelForm):
         fields = ['title', 'author']
 
 # Authentication views
-@require_http_methods(["GET", "POST"])
-@sensitive_post_parameters('password1', 'password2')
+@require_http_methods(["GET", "POST"])  # SECURITY: Restricts HTTP methods to prevent unintended operations
+@sensitive_post_parameters('password1', 'password2')  # SECURITY: Prevents passwords from appearing in logs/errors
 def register(request):
     if request.user.is_authenticated:
         return redirect('bookshelf:member_dashboard')
@@ -94,14 +100,15 @@ def register(request):
                 messages.success(request, 'Registration successful.')
                 return redirect('bookshelf:member_dashboard')
             except Exception as e:
+                # SECURITY: Generic error message to avoid information disclosure
                 messages.error(request, 'An error occurred during registration.')
                 return redirect('bookshelf:register')
     else:
         form = ExtendedUserCreationForm()
     return render(request, 'bookshelf/auth/register.html', {'form': form})
 
-@require_http_methods(["GET", "POST"])
-@sensitive_post_parameters('password')
+@require_http_methods(["GET", "POST"])  # SECURITY: Restricts HTTP methods
+@sensitive_post_parameters('password')  # SECURITY: Prevents password from appearing in logs/errors
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('bookshelf:member_dashboard')
@@ -114,6 +121,7 @@ def login_view(request):
                 login(request, user)
                 messages.success(request, 'Login successful.')
                 
+                # SECURITY: Role-based redirection to appropriate dashboard
                 if user.profile.role == 'ADMIN':
                     return redirect('bookshelf:admin_dashboard')
                 elif user.profile.role == 'LIBRARIAN':
@@ -121,13 +129,14 @@ def login_view(request):
                 else:
                     return redirect('bookshelf:member_dashboard')
             except Exception as e:
+                # SECURITY: Generic error message to avoid information disclosure
                 messages.error(request, 'An error occurred during login.')
                 return redirect('bookshelf:login')
     else:
         form = AuthenticationForm()
     return render(request, 'bookshelf/auth/login.html', {'form': form})
 
-@login_required
+@login_required  # SECURITY: Prevents unauthorized access
 def logout_view(request):
     try:
         logout(request)
@@ -136,14 +145,15 @@ def logout_view(request):
         messages.error(request, 'An error occurred during logout.')
     return redirect('bookshelf:login')
 
-@login_required
-@sensitive_post_parameters('old_password', 'new_password1', 'new_password2')
+@login_required  # SECURITY: Prevents unauthorized access
+@sensitive_post_parameters('old_password', 'new_password1', 'new_password2')  # SECURITY: Prevents passwords from appearing in logs
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             try:
                 user = form.save()
+                # SECURITY: Maintains user's session after password change to prevent forced logout
                 update_session_auth_hash(request, user)
                 messages.success(request, 'Your password was successfully updated!')
                 return redirect('bookshelf:member_dashboard')
@@ -155,7 +165,7 @@ def change_password(request):
     return render(request, 'bookshelf/auth/change_password.html', {'form': form})
 
 # Role-based views
-@user_passes_test(is_admin)
+@user_passes_test(is_admin)  # SECURITY: Ensures only users with admin role can access
 def admin_view(request):
     context = {
         'user_count': CustomUser.objects.count(),
@@ -166,8 +176,9 @@ def admin_view(request):
     }
     return render(request, 'bookshelf/role_views/admin_view.html', context)
 
-@user_passes_test(is_librarian)
+@user_passes_test(is_librarian)  # SECURITY: Ensures only users with librarian role can access
 def librarian_view(request):
+    # SECURITY: Using prefetch_related to optimize database queries and prevent n+1 query vulnerabilities
     libraries = Library.objects.prefetch_related('books', 'books__author').all()
     context = {
         'libraries': libraries,
@@ -176,8 +187,9 @@ def librarian_view(request):
     }
     return render(request, 'bookshelf/role_views/librarian_view.html', context)
 
-@user_passes_test(is_member)
+@user_passes_test(is_member)  # SECURITY: Ensures only users with member role can access
 def member_view(request):
+    # SECURITY: Using select_related to optimize database queries
     books = Book.objects.select_related('author').all()
     context = {
         'books': books,
@@ -187,31 +199,35 @@ def member_view(request):
     return render(request, 'bookshelf/role_views/member_view.html', context)
 
 # Book views
-@login_required
+@login_required  # SECURITY: Prevents unauthorized access
 def book_list(request):
     try:
+        # SECURITY: Using select_related to optimize database queries
         books = Book.objects.all().select_related('author')
         context = {
             'books': books,
             'user_role': request.user.profile.role,
+            # SECURITY: Permission checks to control UI elements
             'can_add': request.user.has_perm('bookshelf.can_add_book'),
             'can_edit': request.user.has_perm('bookshelf.can_edit_book'),
             'can_delete': request.user.has_perm('bookshelf.can_delete_book')
         }
         return render(request, 'bookshelf/book_list.html', context)
     except Exception as e:
+        # SECURITY: Generic error message to avoid information disclosure
         messages.error(request, 'An error occurred while fetching the book list.')
         return redirect('bookshelf:member_dashboard')
 
-class BookCreateView(PermissionRequiredMixin, CreateView):
+class BookCreateView(PermissionRequiredMixin, CreateView):  # SECURITY: Permission-based access control
     model = Book
-    form_class = BookForm
+    form_class = BookForm  # SECURITY: Using form for input validation
     template_name = 'bookshelf/book_form.html'
     success_url = reverse_lazy('bookshelf:book_list')
     permission_required = 'bookshelf.can_add_book'
     raise_exception = True
 
     def handle_no_permission(self):
+        # SECURITY: Proper messaging for unauthorized access without revealing system details
         messages.error(self.request, "You don't have permission to add books.")
         return redirect('bookshelf:book_list')
 
@@ -221,18 +237,20 @@ class BookCreateView(PermissionRequiredMixin, CreateView):
             messages.success(self.request, 'Book created successfully.')
             return response
         except Exception as e:
+            # SECURITY: Generic error message to avoid information disclosure
             messages.error(self.request, 'Error creating book.')
             return self.form_invalid(form)
 
-class BookUpdateView(PermissionRequiredMixin, UpdateView):
+class BookUpdateView(PermissionRequiredMixin, UpdateView):  # SECURITY: Permission-based access control
     model = Book
-    form_class = BookForm
+    form_class = BookForm  # SECURITY: Using form for input validation
     template_name = 'bookshelf/book_form.html'
     success_url = reverse_lazy('bookshelf:book_list')
     permission_required = 'bookshelf.can_edit_book'
     raise_exception = True
 
     def handle_no_permission(self):
+        # SECURITY: Proper messaging for unauthorized access
         messages.error(self.request, "You don't have permission to edit books.")
         return redirect('bookshelf:book_list')
 
@@ -242,10 +260,11 @@ class BookUpdateView(PermissionRequiredMixin, UpdateView):
             messages.success(self.request, 'Book updated successfully.')
             return response
         except Exception as e:
+            # SECURITY: Generic error message to avoid information disclosure
             messages.error(self.request, 'Error updating book.')
             return self.form_invalid(form)
 
-class BookDeleteView(PermissionRequiredMixin, DeleteView):
+class BookDeleteView(PermissionRequiredMixin, DeleteView):  # SECURITY: Permission-based access control
     model = Book
     template_name = 'bookshelf/book_confirm_delete.html'
     success_url = reverse_lazy('bookshelf:book_list')
@@ -253,6 +272,7 @@ class BookDeleteView(PermissionRequiredMixin, DeleteView):
     raise_exception = True
 
     def handle_no_permission(self):
+        # SECURITY: Proper messaging for unauthorized access
         messages.error(self.request, "You don't have permission to delete books.")
         return redirect('bookshelf:book_list')
 
@@ -262,31 +282,36 @@ class BookDeleteView(PermissionRequiredMixin, DeleteView):
             messages.success(request, 'Book deleted successfully.')
             return response
         except Exception as e:
+            # SECURITY: Generic error message to avoid information disclosure
             messages.error(request, 'Error deleting book.')
             return redirect('bookshelf:book_list')
 
-@permission_required('bookshelf.can_view_book_details', raise_exception=True)
+@permission_required('bookshelf.can_view_book_details', raise_exception=True)  # SECURITY: Permission-based access control
 def book_detail(request, pk):
     try:
+        # SECURITY: Using get_object_or_404 to prevent information disclosure
         book = get_object_or_404(Book, pk=pk)
         context = {
             'book': book,
             'user_role': request.user.profile.role,
+            # SECURITY: Permission checks to control UI elements
             'can_edit': request.user.has_perm('bookshelf.can_edit_book'),
             'can_delete': request.user.has_perm('bookshelf.can_delete_book')
         }
         return render(request, 'bookshelf/book_detail.html', context)
     except Exception as e:
+        # SECURITY: Generic error message to avoid information disclosure
         messages.error(request, 'Error retrieving book details.')
         return redirect('bookshelf:book_list')
 
-class LibraryDetailView(LoginRequiredMixin, DetailView):
+class LibraryDetailView(LoginRequiredMixin, DetailView):  # SECURITY: Login required for access
     model = Library
     template_name = 'bookshelf/library_detail.html'
     context_object_name = 'library'
     raise_exception = True
 
     def get_queryset(self):
+        # SECURITY: Using prefetch_related to optimize database queries
         return Library.objects.prefetch_related('books__author')
 
     def get_context_data(self, **kwargs):
@@ -295,5 +320,6 @@ class LibraryDetailView(LoginRequiredMixin, DetailView):
             context['user_role'] = self.request.user.profile.role
             return context
         except Exception as e:
+            # SECURITY: Generic error message to avoid information disclosure
             messages.error(self.request, 'Error retrieving library details.')
             return {}
