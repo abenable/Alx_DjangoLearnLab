@@ -25,29 +25,37 @@ sys.path.append(str(BASE_DIR))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-yzyzq&$0q+xj7vx4r=*moak=pg8lqp(vgo-g7^i79tp1-r9(na'
+# SECURITY: In production, this should be set to a secure random value and kept out of version control
+# Consider using environment variables or a secure secrets management tool
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False  # SECURITY: Debug is disabled in production to prevent leaking sensitive information
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # Add your domain in production
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # SECURITY: In production, specify your actual domain names
 
 # Security Settings
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# SECURITY: Browser-side security enhancements
+SECURE_BROWSER_XSS_FILTER = True  # Enables browser's XSS filtering protection
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents browser from trying to guess content types
+X_FRAME_OPTIONS = 'DENY'  # Prevents clickjacking by denying all framing of this site
+
+# SECURITY: Cookie security settings - requires HTTPS
+CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
+SECURE_SSL_REDIRECT = True  # Forces all connections to use HTTPS instead of HTTP
+
+# SECURITY: HTTP Strict Transport Security
+SECURE_HSTS_SECONDS = 31536000  # 1 year - instructs browsers to use HTTPS for this domain for the specified period
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS to all subdomains as well
+SECURE_HSTS_PRELOAD = True  # Makes the site eligible for HSTS preloading in browsers
 
 # Content Security Policy
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
-CSP_SCRIPT_SRC = ("'self'",)
-CSP_IMG_SRC = ("'self'",)
-CSP_FONT_SRC = ("'self'",)
+# SECURITY: CSP restricts sources from which content can be loaded (helps prevent XSS)
+CSP_DEFAULT_SRC = ("'self'",)  # By default, only allow content from the same origin
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")  # Allow styles from same origin and inline styles
+CSP_SCRIPT_SRC = ("'self'",)  # Only allow scripts from same origin
+CSP_IMG_SRC = ("'self'",)  # Only allow images from same origin
+CSP_FONT_SRC = ("'self'",)  # Only allow fonts from same origin
 
 # Application definition
 
@@ -62,14 +70,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',  # SECURITY: Handles security headers and redirects
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',  # SECURITY: Protects against Cross-Site Request Forgery
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware',  # Add CSP middleware
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # SECURITY: Sets X-Frame-Options header
+    'csp.middleware.CSPMiddleware',  # SECURITY: Implements Content Security Policy
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
