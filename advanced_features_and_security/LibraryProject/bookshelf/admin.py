@@ -1,28 +1,26 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Author, Book, Library, Librarian
+from .models import CustomUser, Book, Library, Author, UserProfile, Librarian
 
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    model = CustomUser
-    list_display = ('username', 'email', 'date_of_birth', 'is_staff', 'is_active',)
-    list_filter = ('is_staff', 'is_active',)
-    fieldsets = (
-        (None, {'fields': ('username', 'email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'date_of_birth', 'profile_photo')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    list_display = ('username', 'email', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active', 'groups')
+    fieldsets = UserAdmin.fieldsets + (
+        ('Additional Info', {'fields': ('date_of_birth', 'profile_photo')}),
     )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'is_staff', 'is_active')}
-        ),
-    )
-    search_fields = ('username', 'email',)
-    ordering = ('username',)
 
-admin.site.register(CustomUser, CustomUserAdmin)
+@admin.register(Library)
+class LibraryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    filter_horizontal = ('books',)
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author')
+    list_filter = ('author',)
+    search_fields = ('title', 'author__name')
+
 admin.site.register(Author)
-admin.site.register(Book)
-admin.site.register(Library)
+admin.site.register(UserProfile)
 admin.site.register(Librarian)

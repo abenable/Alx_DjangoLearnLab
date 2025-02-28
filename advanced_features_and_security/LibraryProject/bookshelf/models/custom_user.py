@@ -31,3 +31,16 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+ROLE_CHOICES = [
+    ('ADMIN', 'Admin'),
+    ('LIBRARIAN', 'Librarian'),
+    ('MEMBER', 'Member'),
+]
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='MEMBER')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"

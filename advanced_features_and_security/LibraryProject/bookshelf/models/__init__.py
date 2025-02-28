@@ -1,4 +1,4 @@
-from .custom_user import CustomUser
+from .custom_user import CustomUser, UserProfile, CustomUserManager
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -35,6 +35,15 @@ class Book(models.Model):
 class Library(models.Model):
     name = models.CharField(max_length=200)
     books = models.ManyToManyField(Book, related_name='libraries')
+
+    class Meta:
+        permissions = [
+            ('can_view_library', 'Can view library'),
+            ('can_create_library', 'Can create library'),
+            ('can_edit_library', 'Can edit library'),
+            ('can_delete_library', 'Can delete library'),
+            ('can_manage_books', 'Can manage library books'),
+        ]
 
     def __str__(self):
         return self.name
