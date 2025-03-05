@@ -5,10 +5,6 @@ from django.utils.html import escape
 from .models import Book, CustomUser
 
 class ExtendedUserCreationForm(UserCreationForm):
-    """
-    Enhanced user creation form with additional security validations.
-    SECURITY: Implements strong password policies and email uniqueness checks.
-    """
     email = forms.EmailField(required=True)
     
     class Meta(UserCreationForm.Meta):
@@ -16,14 +12,6 @@ class ExtendedUserCreationForm(UserCreationForm):
         fields = ('username', 'email')
 
     def clean_password2(self):
-        """
-        SECURITY: Validates password strength to ensure secure passwords.
-        Implements multiple checks:
-        - Password match verification
-        - Minimum length requirement (8 characters)
-        - Requires at least one number
-        - Requires at least one uppercase letter
-        """
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
@@ -40,20 +28,12 @@ class ExtendedUserCreationForm(UserCreationForm):
         return password2
 
     def clean_email(self):
-        """
-        SECURITY: Ensures email uniqueness to prevent duplicate registrations 
-        and potential account takeovers.
-        """
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exists():
             raise ValidationError("This email is already registered")
         return email
 
     def save(self, commit=True):
-        """
-        SECURITY: Uses Django's secure password hashing mechanism through set_password().
-        Sets default role to lowest privilege level (MEMBER) following principle of least privilege.
-        """
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
@@ -63,17 +43,7 @@ class ExtendedUserCreationForm(UserCreationForm):
         return user
 
 class BookForm(forms.ModelForm):
-    """
-    Form for book creation/editing with security validations.
-    SECURITY: Implements input validation and sanitization to prevent XSS attacks.
-    """
     def clean_title(self):
-        """
-        SECURITY: Sanitizes user input by:
-        - Escaping HTML characters to prevent XSS attacks
-        - Validating length requirements
-        - Removing leading/trailing whitespace
-        """
         title = self.cleaned_data.get('title')
         if title:
             title = escape(title.strip())
@@ -84,42 +54,3 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ['title', 'author']
-
-class ExampleForm(forms.Form):
-    """
-    Example form with security validations for demonstration purposes.
-    SECURITY: Implements input validation and sanitization to prevent XSS attacks.
-    """
-    name = forms.CharField(
-        max_length=100, 
-        required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
-    )
-    message = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control'}),
-        max_length=1000
-    )
-    
-    def clean_name(self):
-        """
-        SECURITY: Sanitizes user input by escaping HTML characters to prevent XSS attacks.
-        """
-        name = self.cleaned_data.get('name')
-        if name:
-            name = escape(name.strip())
-            if len(name) < 2:
-                raise ValidationError('Name must be at least 2 characters long.')
-        return name
-    
-    def clean_message(self):
-        """
-        SECURITY: Sanitizes user input in the message field to prevent XSS attacks.
-        """
-        message = self.cleaned_data.get('message')
-        if message:
-            message = escape(message.strip())
-        return message
