@@ -54,7 +54,7 @@ class BookAPITestCase(APITestCase):
 
     def test_create_book_authenticated(self):
         """Test creating a book when authenticated"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         data = {
             'title': 'New Test Book',
             'publication_year': 2023,
@@ -78,7 +78,7 @@ class BookAPITestCase(APITestCase):
 
     def test_update_book_authenticated(self):
         """Test updating a book when authenticated"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         data = {
             'title': 'Updated Book Title',
             'publication_year': 2022,
@@ -92,7 +92,7 @@ class BookAPITestCase(APITestCase):
 
     def test_delete_book_authenticated(self):
         """Test deleting a book when authenticated"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         response = self.client.delete(self.book_detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Book.objects.count(), 1)
@@ -126,7 +126,7 @@ class BookAPITestCase(APITestCase):
 
     def test_invalid_book_data(self):
         """Test validation for future publication year"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         next_year = timezone.now().year + 1
         data = {
             'title': 'Future Book',
@@ -191,7 +191,7 @@ class AuthorAPITestCase(APITestCase):
 
     def test_create_author_authenticated(self):
         """Test creating an author when authenticated"""
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')
         data = {'name': 'New Test Author'}
         response = self.client.post(self.author_list_url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
