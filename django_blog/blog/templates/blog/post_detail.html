@@ -31,8 +31,8 @@
                         <small class="text-muted">
                             By {{ comment.author }} on {{ comment.created_at|date:"F d, Y" }}
                             {% if comment.author == user %}
-                                <a href="{% url 'blog:edit-comment' comment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                <a href="{% url 'blog:delete-comment' comment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                <a href="{% url 'blog:edit-comment' object.pk comment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a href="{% url 'blog:delete-comment' object.pk comment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
                             {% endif %}
                         </small>
                     </div>
