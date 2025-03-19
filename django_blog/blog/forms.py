@@ -2,6 +2,13 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post, Comment
+from taggit.models import Tag
+
+class TagWidget(forms.TextInput):
+    def format_value(self, value):
+        if value is not None and not isinstance(value, str):
+            return ', '.join([tag.name for tag in value])
+        return value
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -29,8 +36,16 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content', 'tags']
         widgets = {
-            'tags': forms.TextInput(attrs={'placeholder': 'Enter tags separated by commas'})
+            'tags': TagWidget(attrs={'placeholder': 'Enter tags separated by commas'})
         }
+
+    def clean_tags(self):
+        tags = self.cleaned_data.get('tags', [])
+        if not tags:
+            return tags
+        if isinstance(tags, str):
+            tags = [tag.strip() for tag in tags.split(',') if tag.strip()]
+        return tags
 
 class CommentForm(forms.ModelForm):
     class Meta:
