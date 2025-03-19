@@ -14,5 +14,32 @@
             <a class="btn btn-danger" href="{% url 'blog:post-delete' object.pk %}">Delete Post</a>
         </div>
         {% endif %}
+        <div class="comments mt-4">
+            <h3>Comments</h3>
+            {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'blog:add-comment' object.pk %}">
+                    {% csrf_token %}
+                    {{ comment_form|crispy }}
+                    <button type="submit" class="btn btn-primary">Add Comment</button>
+                </form>
+            {% endif %}
+            
+            {% for comment in object.comments.all %}
+                <div class="comment card mt-3">
+                    <div class="card-body">
+                        <p class="card-text">{{ comment.content }}</p>
+                        <small class="text-muted">
+                            By {{ comment.author }} on {{ comment.created_at|date:"F d, Y" }}
+                            {% if comment.author == user %}
+                                <a href="{% url 'blog:edit-comment' comment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a href="{% url 'blog:delete-comment' comment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No comments yet.</p>
+            {% endfor %}
+        </div>
     </article>
 {% endblock content %}
