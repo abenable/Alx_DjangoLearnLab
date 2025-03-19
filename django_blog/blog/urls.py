@@ -17,4 +17,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('search/', views.post_search, name='post-search'),
+    path('tag/<str:tag_slug>/', views.posts_by_tag, name='posts-by-tag'),
 ]

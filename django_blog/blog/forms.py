@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Post
+from .models import Post, Comment
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -27,7 +27,10 @@ class UserUpdateForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': forms.TextInput(attrs={'placeholder': 'Enter tags separated by commas'})
+        }
 
 class CommentForm(forms.ModelForm):
     class Meta:

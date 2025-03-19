@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',  # Add the blog app
+    'blog',
+    'taggit',  # Add taggit app
 ]
 
 MIDDLEWARE = [
