@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3kqggcw75%4zr0niag3v#^6nmavw98z7t3em%lk1bc5d4-svn$'
+SECRET_KEY = 'django-insecure-cpx#bu1c=5-psmwx^tc+dqhyh9spam@y4uz@k_$jkr1a_d4lci'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,20 +42,15 @@ INSTALLED_APPS = [
     'accounts',
 ]
 
-# REST Framework settings
+# Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
