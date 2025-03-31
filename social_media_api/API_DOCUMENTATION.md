@@ -1,163 +1,167 @@
 # Social Media API Documentation
 
+## Base URL
+
+```
+https://your-app-name.herokuapp.com/api/v1/
+```
+
 ## Authentication
 
-### Register a New User
+All authenticated endpoints require a Token in the header:
 
-- **URL**: `/api/accounts/register/`
-- **Method**: POST
-- **Data**:
-  ```json
-  {
-    "username": "string",
-    "password": "string",
-    "password2": "string",
-    "email": "string",
-    "first_name": "string",
-    "last_name": "string",
-    "bio": "string",
-    "profile_picture": "file"
-  }
-  ```
-- **Success Response**: 201 Created
-  ```json
-  {
-    "token": "string",
-    "user_id": "integer",
-    "username": "string"
-  }
-  ```
+```
+Authorization: Token your-auth-token
+```
 
-### Login
+To obtain a token, use the login endpoint.
 
-- **URL**: `/api/accounts/login/`
-- **Method**: POST
-- **Data**:
-  ```json
-  {
-    "username": "string",
-    "password": "string"
-  }
-  ```
-- **Success Response**: 200 OK
-  ```json
-  {
-    "token": "string",
-    "user_id": "integer",
-    "username": "string"
-  }
-  ```
+## Endpoints
 
-## User Profile Management
+### Authentication
 
-### View/Update Profile
+#### Register
 
-- **URL**: `/api/accounts/profile/`
-- **Methods**: GET, PATCH
-- **Authentication**: Required
-- **PATCH Data**:
-  ```json
-  {
-    "first_name": "string",
-    "last_name": "string",
-    "bio": "string",
-    "profile_picture": "file"
-  }
-  ```
+- **POST** `/accounts/register/`
+- Request Body:
 
-## Follow System
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
 
-### Follow a User
+#### Login
 
-- **URL**: `/api/accounts/follow/<user_id>/`
-- **Method**: POST
-- **Authentication**: Required
-- **Success Response**: 200 OK
-  ```json
-  {
-    "message": "You are now following username"
-  }
-  ```
-- **Error Response**: 400 Bad Request
-  ```json
-  {
-    "error": "You cannot follow yourself"
-  }
-  ```
+- **POST** `/accounts/login/`
+- Request Body:
 
-### Unfollow a User
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
 
-- **URL**: `/api/accounts/unfollow/<user_id>/`
-- **Method**: POST
-- **Authentication**: Required
-- **Success Response**: 200 OK
-  ```json
-  {
-    "message": "You have unfollowed username"
-  }
-  ```
-- **Error Response**: 400 Bad Request
-  ```json
-  {
-    "error": "You cannot unfollow yourself"
-  }
-  ```
+- Response includes authentication token
 
-## Posts
+### Posts
 
-### Create a Post
+#### List Posts
 
-- **URL**: `/api/posts/posts/`
-- **Method**: POST
-- **Authentication**: Required
-- **Data**:
-  ```json
-  {
-    "title": "string",
-    "content": "string"
-  }
-  ```
-
-### List All Posts
-
-- **URL**: `/api/posts/posts/`
-- **Method**: GET
-- **Query Parameters**:
+- **GET** `/posts/`
+- Query Parameters:
   - `page`: Page number for pagination
-  - `search`: Search in title and content
-  - `author`: Filter by author ID
-  - `ordering`: Order by created_at or updated_at
+  - `search`: Search posts by content
+  - `ordering`: Sort by created_at (asc/desc)
 
-### User Feed
+#### Create Post
 
-- **URL**: `/api/posts/feed/`
-- **Method**: GET
-- **Authentication**: Required
-- **Description**: Returns posts from users that the authenticated user follows
-- **Query Parameters**:
-  - `page`: Page number for pagination
-  - `page_size`: Number of posts per page (default: 10, max: 100)
+- **POST** `/posts/`
+- Auth Required: Yes
+- Request Body:
 
-## Comments
+```json
+{
+  "content": "string",
+  "image": "file (optional)"
+}
+```
 
-### Create a Comment
+#### Get Post
 
-- **URL**: `/api/posts/comments/`
-- **Method**: POST
-- **Authentication**: Required
-- **Data**:
-  ```json
-  {
-    "post": "integer",
-    "content": "string"
-  }
-  ```
+- **GET** `/posts/{id}/`
 
-### List Comments
+#### Update Post
 
-- **URL**: `/api/posts/comments/`
-- **Method**: GET
-- **Query Parameters**:
+- **PUT/PATCH** `/posts/{id}/`
+- Auth Required: Yes (must be post owner)
+
+#### Delete Post
+
+- **DELETE** `/posts/{id}/`
+- Auth Required: Yes (must be post owner)
+
+#### Like/Unlike Post
+
+- **POST** `/posts/{id}/like/`
+- **POST** `/posts/{id}/unlike/`
+- Auth Required: Yes
+
+### Comments
+
+#### List Comments
+
+- **GET** `/comments/`
+- Query Parameters:
   - `post`: Filter by post ID
-  - `author`: Filter by author ID
-  - `ordering`: Order by created_at
+  - `page`: Page number
+
+#### Create Comment
+
+- **POST** `/comments/`
+- Auth Required: Yes
+- Request Body:
+
+```json
+{
+  "post": "integer",
+  "content": "string"
+}
+```
+
+### Feed
+
+#### Get User Feed
+
+- **GET** `/feed/`
+- Auth Required: Yes
+- Query Parameters:
+  - `page`: Page number
+
+### Notifications
+
+#### List Notifications
+
+- **GET** `/notifications/`
+- Auth Required: Yes
+- Query Parameters:
+  - `read`: Filter by read status (true/false)
+  - `page`: Page number
+
+## Error Responses
+
+```json
+{
+  "detail": "Error message"
+}
+```
+
+## Rate Limiting
+
+- Authenticated requests: 1000 per hour
+- Anonymous requests: 100 per hour
+
+## Best Practices
+
+1. Always validate response status codes
+2. Include authentication token for authenticated endpoints
+3. Use pagination for large datasets
+4. Handle errors gracefully
+5. Keep track of rate limits
+
+## Testing
+
+You can test the API using tools like:
+
+- Postman
+- cURL
+- HTTPie
+
+Example cURL request:
+
+```bash
+curl -H "Authorization: Token YOUR_TOKEN" https://your-app-name.herokuapp.com/api/v1/feed/
+```
