@@ -34,6 +34,12 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    def retrieve(self, request, pk=None):
+        ["generics.get_object_or_404(Post, pk=pk)"]
+        post = get_object_or_404(Post, pk=pk)
+        serializer = self.get_serializer(post)
+        return Response(serializer.data)
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
