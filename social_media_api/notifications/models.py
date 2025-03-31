@@ -16,6 +16,7 @@ class Notification(models.Model):
     target = GenericForeignKey('target_content_type', 'target_object_id')
     
     created_at = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now=True)  # Updated timestamp for any changes
     is_read = models.BooleanField(default=False)
 
     class Meta:
