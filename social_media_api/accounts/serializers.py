@@ -1,16 +1,18 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    token = serializers.CharField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'bio', 'profile_picture')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'bio', 'profile_picture', 'token')
         extra_kwargs = {
             'email': {'required': True}
         }
@@ -22,7 +24,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')
-        user = User.objects.create_user(**validated_data)
+        password = validated_data.pop('password')
+        user = get_user_model().objects.create_user(
+            password=password,
+            **validated_data
+        )
+        # Create token for the user
+        token = Token.objects.create(user=user)
+        user.token = token.key
         return user
 
 class UserProfileSerializer(serializers.ModelSerializer):
