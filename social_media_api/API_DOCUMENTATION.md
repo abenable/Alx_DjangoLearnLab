@@ -3,6 +3,7 @@
 ## Authentication
 
 ### Register a New User
+
 - **URL**: `/api/accounts/register/`
 - **Method**: POST
 - **Data**:
@@ -28,6 +29,7 @@
   ```
 
 ### Login
+
 - **URL**: `/api/accounts/login/`
 - **Method**: POST
 - **Data**:
@@ -49,6 +51,7 @@
 ## User Profile Management
 
 ### View/Update Profile
+
 - **URL**: `/api/accounts/profile/`
 - **Methods**: GET, PATCH
 - **Authentication**: Required
@@ -65,6 +68,7 @@
 ## Follow System
 
 ### Follow a User
+
 - **URL**: `/api/accounts/follow/<user_id>/`
 - **Method**: POST
 - **Authentication**: Required
@@ -82,6 +86,7 @@
   ```
 
 ### Unfollow a User
+
 - **URL**: `/api/accounts/unfollow/<user_id>/`
 - **Method**: POST
 - **Authentication**: Required
@@ -101,6 +106,7 @@
 ## Posts
 
 ### Create a Post
+
 - **URL**: `/api/posts/posts/`
 - **Method**: POST
 - **Authentication**: Required
@@ -113,6 +119,7 @@
   ```
 
 ### List All Posts
+
 - **URL**: `/api/posts/posts/`
 - **Method**: GET
 - **Query Parameters**:
@@ -122,6 +129,7 @@
   - `ordering`: Order by created_at or updated_at
 
 ### User Feed
+
 - **URL**: `/api/posts/feed/`
 - **Method**: GET
 - **Authentication**: Required
@@ -133,6 +141,7 @@
 ## Comments
 
 ### Create a Comment
+
 - **URL**: `/api/posts/comments/`
 - **Method**: POST
 - **Authentication**: Required
@@ -145,6 +154,7 @@
   ```
 
 ### List Comments
+
 - **URL**: `/api/posts/comments/`
 - **Method**: GET
 - **Query Parameters**:
