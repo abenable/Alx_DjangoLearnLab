@@ -9,10 +9,17 @@ from .serializers import UserSerializer, UserProfileSerializer
 
 User = get_user_model()
 
-class UserListView(generics.ListAPIView):
-    queryset = User.objects.all()
+class UserListView(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
